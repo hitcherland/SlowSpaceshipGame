@@ -31,7 +31,7 @@ public class Ship : MonoBehaviour, ShipInterface
     public virtual void rotateTowardsPoint(Quaternion rotation, float rotationSpeed) { throw new NotImplementedException(); }
     public virtual void moveInDirection(Vector3 direction, float power) { throw new NotImplementedException(); }
 
-    private void Start()
+    protected void Start()
     {
         Instantiate(model, transform);
     }
