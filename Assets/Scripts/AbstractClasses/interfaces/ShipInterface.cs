@@ -31,6 +31,10 @@ public class Ship : MonoBehaviour, ShipInterface
     public virtual void rotateTowardsPoint(Quaternion rotation, float rotationSpeed) { throw new NotImplementedException(); }
     public virtual void moveInDirection(Vector3 direction, float power) { throw new NotImplementedException(); }
 
+    /*We should be very strict about defining functions here, only put in what every instance MUST do
+     * In this case, we demand that we instantiate the ship model using prefabs (https://docs.unity3d.com/2018.4/Documentation/Manual/Prefabs.html).
+     */
+
     protected void Start()
     {
         Instantiate(model, transform);
