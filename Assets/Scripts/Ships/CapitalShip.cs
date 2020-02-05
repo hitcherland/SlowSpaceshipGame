@@ -5,8 +5,14 @@ using UnityEngine;
 public class CapitalShip : Ship
 {
     // TODO: check for ownership, allow for input if true
-    public float pow = 10;
     public bool owned = true;
+    private Vector3 moveDirection = Vector3.zero;
+    private Vector3 targetPosition;
+
+    float pitch;
+    float roll;
+    float yaw;
+
 
     // Start is called before the first frame update
     new void Start()
@@ -17,10 +23,15 @@ public class CapitalShip : Ship
     // Update is called once per frame
     void Update()
     {
-        // TODO: moving forwards
-        Quaternion x_quart = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * Time.deltaTime * pow, Vector3.up);
-        Quaternion y_quart = Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * Time.deltaTime * pow, Vector3.right);
+        // get axes
+        roll = Input.GetAxis("Horizontal");
+        pitch = -Input.GetAxis("Vertical");
 
-        transform.rotation = transform.rotation * x_quart * y_quart;
+        // rotate
+        transform.Rotate(Vector3.back * roll * 100f * Time.deltaTime, Space.Self);
+        transform.Rotate(Vector3.right * pitch * 100f * Time.deltaTime, Space.Self);
+
+        // alter speed with space (for now)
+        if (Input.GetKey("space")) transform.Translate(Vector3.forward * enginePower * Time.deltaTime);
     }
 }

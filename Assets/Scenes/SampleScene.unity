@@ -294,8 +294,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   model: {fileID: 871566838362752368, guid: d83a57a57f88d6a4f8822d87e0b4fe92, type: 3}
   totalBaseHealth: 0
-  enginePower: 0
-  engineRotationSpeed: 0
+  enginePower: 10
+  engineRotationSpeed: 50
+  pow: 10
+  owned: 1
 --- !u!4 &1494276256
 Transform:
   m_ObjectHideFlags: 0
