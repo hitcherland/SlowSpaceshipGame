@@ -79,6 +79,9 @@ public class BaseNetwork
         } else
         {
             socket.Connect(remoteEndpoint);
+            Debug.Log(socket.Connected);
+            Debug.Log(socket.LocalEndPoint);
+            Debug.Log(socket.RemoteEndPoint);
         }
 
         IsReady = true;
@@ -160,7 +163,7 @@ public class Client : BaseNetwork
             JoinRequest = new JoinRequest()
         };
         req.JoinRequest.Timestamp = (int)DateTime.Now.ToFileTimeUtc();
-
+        Debug.Log("sent join");
         socket.SendTo(req.ToByteArray(), remoteEndpoint);
     }
 }

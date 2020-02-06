@@ -35,15 +35,21 @@ public class StateHandler : MonoBehaviour
     public string localAddress = "";
     public int localPort = -1;
 
-
-    public AddressFamily addressFamily = AddressFamily.InterNetwork;
     public bool IsClient = true;
+    public bool IsSetup = false;
 
     // Start is called before the first frame update
     void Start()
     {
         state = GetComponent<State>();
-        if(IsClient)
+        if (IsSetup)
+            Setup();
+    }
+
+    public void Setup()
+    {
+
+        if (IsClient)
         {
             client = new Client
             {
@@ -54,7 +60,8 @@ public class StateHandler : MonoBehaviour
             };
             client.Connect();
             client.UpdateResponse += new EventHandler<UpdateResponse>(OnUpdateResponse);
-        } else
+        }
+        else
         {
             service = new Service
             {
@@ -75,6 +82,9 @@ public class StateHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (client == null && service == null)
+            return;
+
         if(IsClient)
         {
             if (!client.IsJoined) { client.Join(); }
