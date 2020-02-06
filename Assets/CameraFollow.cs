@@ -28,20 +28,25 @@ public class CameraFollow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float getMousePosx = Input.mousePosition.x * 2 * 180 / Screen.width;
-        float getMousePosy = Input.mousePosition.y * 2 * 180 / Screen.height;
-        mouseRot = Quaternion.AngleAxis(getMousePosx - 180, Vector3.up) * Quaternion.AngleAxis(180 - getMousePosy, Vector3.right);
+        float getMousePosx = Input.mousePosition.x * 2 * 180 / Screen.width - 180;
+        float getMousePosy = Input.mousePosition.y * 2 * 90 / Screen.height - 90;
+        //mouseRot = Quaternion.AngleAxis(-getMousePosy, Vector3.right) * Quaternion.AngleAxis(getMousePosx, Vector3.up);
         
+        mouseRot = Quaternion.Euler(-getMousePosy, getMousePosx, 0); // * Quaternion.Euler(0, getMousePosx, 0);
+        goalPosition = goal.transform.TransformPoint(relativePoint);
+        Vector3 goalPos = goal.transform.position;
+        Vector3 goalRotated = mouseRot * (goalPosition - goalPos) + goalPos;
 
-        goalPosition = goal.transform.TransformPoint(mouseRot * relativePoint);
-        Vector3 mid = goal.transform.position;
+        transform.position = goalRotated;
+        //transform.position = Vector3.RotateTowards(transform.position - goalPos, goalRotated - goalPos, 0.01f * Mathf.PI, 0) + goalPos;
+        //transform.position = Vector3.Slerp(transform.position - mid, goalPosition - mid, lerpSpeed * Time.deltaTime) + mid;
 
-        transform.position = Vector3.Slerp(transform.position - mid, goalPosition - mid, lerpSpeed * Time.deltaTime) + mid;
+        transform.LookAt(goal.transform, goal.transform.up);
 
-        transform.LookAt(goal.transform);
-        // goalRotation = goal.transform.rotation * relativeRotation * mouseRot;
+        //goalRotation = goal.transform.rotation * relativeRotation; // * mouseRot;
+        //transform.rotation = goalRotation;
         // transform.rotation = Quaternion.Slerp(transform.rotation, goalRotation, lerpSpeed * Time.deltaTime);
 
-        Debug.Log(getMousePosx);
+        Debug.Log(getMousePosx + ", " + getMousePosy);
     }
 }
