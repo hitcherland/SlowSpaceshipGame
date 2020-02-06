@@ -321,7 +321,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 763614584}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -12.13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -356,14 +356,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ec0bdb0ae776747a4d03adf2a53a34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modelPath: 
+  modelPath: Capital/PlaceholderCapitalShip
   totalBaseHealth: 0
   enginePower: 10
   engineRotationSpeed: 50
-  pow: 10
-  owned: 1
   team: 0
   type: 0
+  owned: 1
 --- !u!4 &1494276256
 Transform:
   m_ObjectHideFlags: 0
