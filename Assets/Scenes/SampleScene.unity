@@ -358,8 +358,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   modelPath: 
   totalBaseHealth: 0
-  enginePower: 0
-  engineRotationSpeed: 0
+  enginePower: 10
+  engineRotationSpeed: 50
+  pow: 10
+  owned: 1
   team: 0
   type: 0
 --- !u!4 &1494276256
