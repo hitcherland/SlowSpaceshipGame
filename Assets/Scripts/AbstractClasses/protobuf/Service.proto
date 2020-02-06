@@ -1,0 +1,40 @@
+syntax = "proto3";
+package GameProtobufs.Services;
+
+import "State.proto";
+
+message JoinRequest {
+	int32 timestamp = 1;
+}
+message JoinResponse {
+	int32 timestamp = 1;
+}
+message LeaveRequest {}
+message LeaveResponse {}
+message UpdateRequest {
+	int32 timestamp = 1;
+}
+message UpdateResponse {
+	StateMessage state = 1;
+}
+
+enum ServiceTypes {
+	Null = 0;
+	Join = 1;
+	Leave = 2;
+	Update = 3;
+}
+
+message RequestMessage {
+	ServiceTypes serviceType = 1;
+	JoinRequest joinRequest = 2;
+	LeaveRequest leaveRequest = 3;
+	UpdateRequest updateRequest = 4;
+}
+
+message ResponseMessage {
+	ServiceTypes serviceType = 1;
+	JoinResponse joinResponse = 2;
+	LeaveResponse leaveResponse = 3;
+	UpdateResponse updateResponse = 4;
+}

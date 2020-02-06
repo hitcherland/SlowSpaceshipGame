@@ -6,7 +6,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using Google.Protobuf;
-//using GameProtobufs;
+using GameProtobufs;
 
 public class Server : BaseServer
 {
@@ -14,12 +14,11 @@ public class Server : BaseServer
     // private StateHandler stateHander;
     public string hostAddress = "";
     public int port = 8081;
-    public AddressFamily addressType = AddressFamily.InterNetwork;
+    private EndPoint endpoint;
 
+    public AddressFamily addressType = AddressFamily.InterNetwork;
     private const int BUFFER_SIZE = 1024 ^ 2;
     private Socket socket;
-    private Int32 backlog = 100; // how many backlog messages we want to read
-    private EndPoint endpoint;
     private byte[] buffer = new Byte[BUFFER_SIZE];
 
     // Start is called before the first frame update
@@ -31,12 +30,16 @@ public class Server : BaseServer
 
     void Update()
     {
-        SocketAsyncEventArgs asyncArgs = new SocketAsyncEventArgs();
-        asyncArgs.RemoteEndPoint = endpoint;
-        asyncArgs.SetBuffer(buffer, 0, BUFFER_SIZE);
-        asyncArgs.Completed += new EventHandler<SocketAsyncEventArgs>(Receive);
 
-        socket.ReceiveFromAsync(asyncArgs);
+        if (socket == null || !socket.IsBound)
+            return;
+
+        SocketAsyncEventArgs receiveArgs = new SocketAsyncEventArgs();
+        receiveArgs.RemoteEndPoint = endpoint;
+        receiveArgs.SetBuffer(buffer, 0, BUFFER_SIZE);
+        receiveArgs.Completed += new EventHandler<SocketAsyncEventArgs>(Receive);
+
+        socket.ReceiveFromAsync(receiveArgs);
     }
 
     void Bind()
@@ -61,21 +64,44 @@ public class Server : BaseServer
                         continue;
                     }
                     socket = new Socket(addressType, SocketType.Dgram, ProtocolType.Udp);
-                    endpoint = (EndPoint)(new IPEndPoint(ipAddress, port));
+                    endpoint = new IPEndPoint(ipAddress, port);
                     break;
                 }
                 catch { }
             }
         }
-        socket.Bind(endpoint);
+        if(socket != null)
+        {
+            Debug.Log("SERVER: binding to " + endpoint);
+            socket.Bind(endpoint);
+        }
     }
 
     private void Receive(object sender, SocketAsyncEventArgs asyncArgs)
     {
         if (asyncArgs.BytesTransferred > 0 && asyncArgs.SocketError == SocketError.Success)
         {
-            //State state = State.Parser.ParseFrom(asyncArgs.Buffer, 0, asyncArgs.BytesTransferred);
-            //StateHandler.updateState(state);
+            //Service req = Service.Parser.ParseFrom(asyncArgs.Buffer, 0, asyncArgs.BytesTransferred);
+            return;
+            /*
+            if(req.Join != null)
+            {
+                
+                Socket s = (Socket)sender;
+                Debug.Log("joining");
+
+                //s.Send(.ToByteArray());
+                Debug.Log("joined");
+            }
+            */
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (socket != null && socket.IsBound)
+        {
+            socket.Close();
         }
     }
 }

@@ -1,0 +1,13 @@
+syntax = "proto3";
+package GameProtobufs;
+
+import "transform.proto";
+
+message ClientJoinEvent {
+	int32 timestamp = 1;
+	TransformMessage transform = 2;
+	string modelAssetPath = 3;
+	int32 team = 4;
+	bool youOwnThis = 5;
+	//ShipMessage ship = 6;
+}

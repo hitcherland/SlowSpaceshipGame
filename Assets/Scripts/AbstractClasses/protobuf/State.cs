@@ -24,18 +24,38 @@ namespace GameProtobufs {
     static StateReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgtTdGF0ZS5wcm90bxINR2FtZVByb3RvYnVmcyI7CgxTdGF0ZU1lc3NhZ2US",
-            "GAoQcGF0aFRvR2FtZU9iamVjdBgBIAEoCRIRCgl0aW1lc3RhbXAYAiABKAVi",
-            "BnByb3RvMw=="));
+            "CgtTdGF0ZS5wcm90bxINR2FtZVByb3RvYnVmcxoPdHJhbnNmb3JtLnByb3Rv",
+            "ItkBCgxTdGF0ZU1lc3NhZ2USGAoQcGF0aFRvR2FtZU9iamVjdBgBIAEoCRIR",
+            "Cgl0aW1lc3RhbXAYAiABKAUSMgoJdHJhbnNmb3JtGAMgASgLMh8uR2FtZVBy",
+            "b3RvYnVmcy5UcmFuc2Zvcm1NZXNzYWdlEjIKDXN0YXRlTWVzc2FnZXMYBCAD",
+            "KAsyGy5HYW1lUHJvdG9idWZzLlN0YXRlTWVzc2FnZRI0CgtzaGlwTWVzc2Fn",
+            "ZRgFIAEoCzIfLkdhbWVQcm90b2J1ZnMuU2hpcFN0YXRlTWVzc2FnZSLZAQoQ",
+            "U2hpcFN0YXRlTWVzc2FnZRIlCgR0eXBlGAEgASgOMhcuR2FtZVByb3RvYnVm",
+            "cy5TaGlwVHlwZRIVCg1zaGlwTW9kZWxOYW1lGAIgASgJEhsKE3RvdGFsUG9z",
+            "c2libGVIZWFsdGgYAyABKAUSEwoLdG90YWxIZWFsdGgYBCABKAUSFQoNY3Vy",
+            "cmVudEhlYWx0aBgFIAEoBRITCgtlbmdpbmVQb3dlchgGIAEoAhIbChNlbmdp",
+            "bmVSb3RhdGlvblNwZWVkGAcgASgCEgwKBHRlYW0YCCABKAUqMgoIU2hpcFR5",
+            "cGUSCwoHY2FwaXRhbBAAEgsKB2ZpZ2h0ZXIQARIMCghlbmdpbmVlchACYgZw",
+            "cm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::GameProtobufs.StateMessage), global::GameProtobufs.StateMessage.Parser, new[]{ "PathToGameObject", "Timestamp" }, null, null, null, null)
+          new pbr::FileDescriptor[] { global::GameProtobufs.TransformReflection.Descriptor, },
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::GameProtobufs.ShipType), }, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::GameProtobufs.StateMessage), global::GameProtobufs.StateMessage.Parser, new[]{ "PathToGameObject", "Timestamp", "Transform", "StateMessages", "ShipMessage" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::GameProtobufs.ShipStateMessage), global::GameProtobufs.ShipStateMessage.Parser, new[]{ "Type", "ShipModelName", "TotalPossibleHealth", "TotalHealth", "CurrentHealth", "EnginePower", "EngineRotationSpeed", "Team" }, null, null, null, null)
           }));
     }
     #endregion
 
   }
+  #region Enums
+  public enum ShipType {
+    [pbr::OriginalName("capital")] Capital = 0,
+    [pbr::OriginalName("fighter")] Fighter = 1,
+    [pbr::OriginalName("engineer")] Engineer = 2,
+  }
+
+  #endregion
+
   #region Messages
   public sealed partial class StateMessage : pb::IMessage<StateMessage> {
     private static readonly pb::MessageParser<StateMessage> _parser = new pb::MessageParser<StateMessage>(() => new StateMessage());
@@ -64,6 +84,9 @@ namespace GameProtobufs {
     public StateMessage(StateMessage other) : this() {
       pathToGameObject_ = other.pathToGameObject_;
       timestamp_ = other.timestamp_;
+      transform_ = other.transform_ != null ? other.transform_.Clone() : null;
+      stateMessages_ = other.stateMessages_.Clone();
+      shipMessage_ = other.shipMessage_ != null ? other.shipMessage_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -94,6 +117,38 @@ namespace GameProtobufs {
       }
     }
 
+    /// <summary>Field number for the "transform" field.</summary>
+    public const int TransformFieldNumber = 3;
+    private global::GameProtobufs.TransformMessage transform_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::GameProtobufs.TransformMessage Transform {
+      get { return transform_; }
+      set {
+        transform_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "stateMessages" field.</summary>
+    public const int StateMessagesFieldNumber = 4;
+    private static readonly pb::FieldCodec<global::GameProtobufs.StateMessage> _repeated_stateMessages_codec
+        = pb::FieldCodec.ForMessage(34, global::GameProtobufs.StateMessage.Parser);
+    private readonly pbc::RepeatedField<global::GameProtobufs.StateMessage> stateMessages_ = new pbc::RepeatedField<global::GameProtobufs.StateMessage>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::GameProtobufs.StateMessage> StateMessages {
+      get { return stateMessages_; }
+    }
+
+    /// <summary>Field number for the "shipMessage" field.</summary>
+    public const int ShipMessageFieldNumber = 5;
+    private global::GameProtobufs.ShipStateMessage shipMessage_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::GameProtobufs.ShipStateMessage ShipMessage {
+      get { return shipMessage_; }
+      set {
+        shipMessage_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as StateMessage);
@@ -109,6 +164,9 @@ namespace GameProtobufs {
       }
       if (PathToGameObject != other.PathToGameObject) return false;
       if (Timestamp != other.Timestamp) return false;
+      if (!object.Equals(Transform, other.Transform)) return false;
+      if(!stateMessages_.Equals(other.stateMessages_)) return false;
+      if (!object.Equals(ShipMessage, other.ShipMessage)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -117,6 +175,9 @@ namespace GameProtobufs {
       int hash = 1;
       if (PathToGameObject.Length != 0) hash ^= PathToGameObject.GetHashCode();
       if (Timestamp != 0) hash ^= Timestamp.GetHashCode();
+      if (transform_ != null) hash ^= Transform.GetHashCode();
+      hash ^= stateMessages_.GetHashCode();
+      if (shipMessage_ != null) hash ^= ShipMessage.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -138,6 +199,15 @@ namespace GameProtobufs {
         output.WriteRawTag(16);
         output.WriteInt32(Timestamp);
       }
+      if (transform_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Transform);
+      }
+      stateMessages_.WriteTo(output, _repeated_stateMessages_codec);
+      if (shipMessage_ != null) {
+        output.WriteRawTag(42);
+        output.WriteMessage(ShipMessage);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -151,6 +221,13 @@ namespace GameProtobufs {
       }
       if (Timestamp != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Timestamp);
+      }
+      if (transform_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Transform);
+      }
+      size += stateMessages_.CalculateSize(_repeated_stateMessages_codec);
+      if (shipMessage_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ShipMessage);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -169,6 +246,19 @@ namespace GameProtobufs {
       if (other.Timestamp != 0) {
         Timestamp = other.Timestamp;
       }
+      if (other.transform_ != null) {
+        if (transform_ == null) {
+          Transform = new global::GameProtobufs.TransformMessage();
+        }
+        Transform.MergeFrom(other.Transform);
+      }
+      stateMessages_.Add(other.stateMessages_);
+      if (other.shipMessage_ != null) {
+        if (shipMessage_ == null) {
+          ShipMessage = new global::GameProtobufs.ShipStateMessage();
+        }
+        ShipMessage.MergeFrom(other.ShipMessage);
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -186,6 +276,349 @@ namespace GameProtobufs {
           }
           case 16: {
             Timestamp = input.ReadInt32();
+            break;
+          }
+          case 26: {
+            if (transform_ == null) {
+              Transform = new global::GameProtobufs.TransformMessage();
+            }
+            input.ReadMessage(Transform);
+            break;
+          }
+          case 34: {
+            stateMessages_.AddEntriesFrom(input, _repeated_stateMessages_codec);
+            break;
+          }
+          case 42: {
+            if (shipMessage_ == null) {
+              ShipMessage = new global::GameProtobufs.ShipStateMessage();
+            }
+            input.ReadMessage(ShipMessage);
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class ShipStateMessage : pb::IMessage<ShipStateMessage> {
+    private static readonly pb::MessageParser<ShipStateMessage> _parser = new pb::MessageParser<ShipStateMessage>(() => new ShipStateMessage());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<ShipStateMessage> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::GameProtobufs.StateReflection.Descriptor.MessageTypes[1]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ShipStateMessage() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ShipStateMessage(ShipStateMessage other) : this() {
+      type_ = other.type_;
+      shipModelName_ = other.shipModelName_;
+      totalPossibleHealth_ = other.totalPossibleHealth_;
+      totalHealth_ = other.totalHealth_;
+      currentHealth_ = other.currentHealth_;
+      enginePower_ = other.enginePower_;
+      engineRotationSpeed_ = other.engineRotationSpeed_;
+      team_ = other.team_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ShipStateMessage Clone() {
+      return new ShipStateMessage(this);
+    }
+
+    /// <summary>Field number for the "type" field.</summary>
+    public const int TypeFieldNumber = 1;
+    private global::GameProtobufs.ShipType type_ = global::GameProtobufs.ShipType.Capital;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::GameProtobufs.ShipType Type {
+      get { return type_; }
+      set {
+        type_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "shipModelName" field.</summary>
+    public const int ShipModelNameFieldNumber = 2;
+    private string shipModelName_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string ShipModelName {
+      get { return shipModelName_; }
+      set {
+        shipModelName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "totalPossibleHealth" field.</summary>
+    public const int TotalPossibleHealthFieldNumber = 3;
+    private int totalPossibleHealth_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int TotalPossibleHealth {
+      get { return totalPossibleHealth_; }
+      set {
+        totalPossibleHealth_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "totalHealth" field.</summary>
+    public const int TotalHealthFieldNumber = 4;
+    private int totalHealth_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int TotalHealth {
+      get { return totalHealth_; }
+      set {
+        totalHealth_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "currentHealth" field.</summary>
+    public const int CurrentHealthFieldNumber = 5;
+    private int currentHealth_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CurrentHealth {
+      get { return currentHealth_; }
+      set {
+        currentHealth_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "enginePower" field.</summary>
+    public const int EnginePowerFieldNumber = 6;
+    private float enginePower_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float EnginePower {
+      get { return enginePower_; }
+      set {
+        enginePower_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "engineRotationSpeed" field.</summary>
+    public const int EngineRotationSpeedFieldNumber = 7;
+    private float engineRotationSpeed_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float EngineRotationSpeed {
+      get { return engineRotationSpeed_; }
+      set {
+        engineRotationSpeed_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "team" field.</summary>
+    public const int TeamFieldNumber = 8;
+    private int team_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Team {
+      get { return team_; }
+      set {
+        team_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as ShipStateMessage);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(ShipStateMessage other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Type != other.Type) return false;
+      if (ShipModelName != other.ShipModelName) return false;
+      if (TotalPossibleHealth != other.TotalPossibleHealth) return false;
+      if (TotalHealth != other.TotalHealth) return false;
+      if (CurrentHealth != other.CurrentHealth) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(EnginePower, other.EnginePower)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(EngineRotationSpeed, other.EngineRotationSpeed)) return false;
+      if (Team != other.Team) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Type != global::GameProtobufs.ShipType.Capital) hash ^= Type.GetHashCode();
+      if (ShipModelName.Length != 0) hash ^= ShipModelName.GetHashCode();
+      if (TotalPossibleHealth != 0) hash ^= TotalPossibleHealth.GetHashCode();
+      if (TotalHealth != 0) hash ^= TotalHealth.GetHashCode();
+      if (CurrentHealth != 0) hash ^= CurrentHealth.GetHashCode();
+      if (EnginePower != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(EnginePower);
+      if (EngineRotationSpeed != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(EngineRotationSpeed);
+      if (Team != 0) hash ^= Team.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Type != global::GameProtobufs.ShipType.Capital) {
+        output.WriteRawTag(8);
+        output.WriteEnum((int) Type);
+      }
+      if (ShipModelName.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(ShipModelName);
+      }
+      if (TotalPossibleHealth != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(TotalPossibleHealth);
+      }
+      if (TotalHealth != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(TotalHealth);
+      }
+      if (CurrentHealth != 0) {
+        output.WriteRawTag(40);
+        output.WriteInt32(CurrentHealth);
+      }
+      if (EnginePower != 0F) {
+        output.WriteRawTag(53);
+        output.WriteFloat(EnginePower);
+      }
+      if (EngineRotationSpeed != 0F) {
+        output.WriteRawTag(61);
+        output.WriteFloat(EngineRotationSpeed);
+      }
+      if (Team != 0) {
+        output.WriteRawTag(64);
+        output.WriteInt32(Team);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Type != global::GameProtobufs.ShipType.Capital) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
+      }
+      if (ShipModelName.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(ShipModelName);
+      }
+      if (TotalPossibleHealth != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(TotalPossibleHealth);
+      }
+      if (TotalHealth != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(TotalHealth);
+      }
+      if (CurrentHealth != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(CurrentHealth);
+      }
+      if (EnginePower != 0F) {
+        size += 1 + 4;
+      }
+      if (EngineRotationSpeed != 0F) {
+        size += 1 + 4;
+      }
+      if (Team != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Team);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(ShipStateMessage other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Type != global::GameProtobufs.ShipType.Capital) {
+        Type = other.Type;
+      }
+      if (other.ShipModelName.Length != 0) {
+        ShipModelName = other.ShipModelName;
+      }
+      if (other.TotalPossibleHealth != 0) {
+        TotalPossibleHealth = other.TotalPossibleHealth;
+      }
+      if (other.TotalHealth != 0) {
+        TotalHealth = other.TotalHealth;
+      }
+      if (other.CurrentHealth != 0) {
+        CurrentHealth = other.CurrentHealth;
+      }
+      if (other.EnginePower != 0F) {
+        EnginePower = other.EnginePower;
+      }
+      if (other.EngineRotationSpeed != 0F) {
+        EngineRotationSpeed = other.EngineRotationSpeed;
+      }
+      if (other.Team != 0) {
+        Team = other.Team;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Type = (global::GameProtobufs.ShipType) input.ReadEnum();
+            break;
+          }
+          case 18: {
+            ShipModelName = input.ReadString();
+            break;
+          }
+          case 24: {
+            TotalPossibleHealth = input.ReadInt32();
+            break;
+          }
+          case 32: {
+            TotalHealth = input.ReadInt32();
+            break;
+          }
+          case 40: {
+            CurrentHealth = input.ReadInt32();
+            break;
+          }
+          case 53: {
+            EnginePower = input.ReadFloat();
+            break;
+          }
+          case 61: {
+            EngineRotationSpeed = input.ReadFloat();
+            break;
+          }
+          case 64: {
+            Team = input.ReadInt32();
             break;
           }
         }

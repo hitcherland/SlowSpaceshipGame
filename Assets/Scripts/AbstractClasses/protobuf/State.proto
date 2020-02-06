@@ -1,7 +1,29 @@
 syntax = "proto3";
 package GameProtobufs;
 
+import "transform.proto";
+
 message StateMessage {
 	string pathToGameObject = 1;
 	int32 timestamp = 2;
+	TransformMessage transform = 3;
+	repeated StateMessage stateMessages = 4;
+	ShipStateMessage shipMessage = 5;
+}
+
+enum ShipType {
+	capital = 0;
+	fighter = 1;
+	engineer = 2;
+}
+
+message ShipStateMessage {
+	ShipType type = 1;
+	string shipModelName = 2;
+	int32 totalPossibleHealth = 3;
+	int32 totalHealth = 4;
+	int32 currentHealth = 5;
+	float enginePower = 6;
+	float engineRotationSpeed = 7;
+	int32 team = 8;
 }
