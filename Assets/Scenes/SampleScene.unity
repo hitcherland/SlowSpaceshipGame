@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.020446898, g: 0.002293129, b: 0.019532084, a: 1}
+  m_IndirectSpecularColor: {r: 0.16809857, g: 0.013520595, b: 0.16473225, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -457,7 +457,7 @@ ParticleSystem:
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
-  autoRandomSeed: 1
+  autoRandomSeed: 0
   useRigidbodyForVelocity: 1
   startDelay:
     serializedVersion: 2
@@ -691,7 +691,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.25
+      scalar: 5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1702,7 +1702,7 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   ColorModule:
-    enabled: 1
+    enabled: 0
     gradient:
       serializedVersion: 2
       minMaxState: 1
@@ -5075,10 +5075,13 @@ MonoBehaviour:
   modelPath: Capital/PlaceholderCapitalShip
   totalBaseHealth: 0
   enginePower: 10
-  engineRotationSpeed: 50
+  engineRotationSpeed: 10
   team: 0
   type: 0
   owned: 1
+  powLevel: 0
+  effectivePowLevel: 0
+  accelFactor: 0.5
 --- !u!4 &1494276256
 Transform:
   m_ObjectHideFlags: 0
