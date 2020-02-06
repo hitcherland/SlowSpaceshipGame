@@ -92,6 +92,8 @@ public class BaseNetwork
         if (args.BytesTransferred == 0)
             return;
 
+        Debug.Log(args.BytesTransferred);
+
         RequestMessage req = RequestMessage.Parser.ParseFrom(args.Buffer, 0, args.BytesTransferred);
 
         if (req.ServiceType == ServiceTypes.Join)

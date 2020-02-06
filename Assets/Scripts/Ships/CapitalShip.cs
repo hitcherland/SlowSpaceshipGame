@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class CapitalShip : Ship
 {
     // TODO: check for ownership, allow for input if true
     public bool owned = true;
+    public float powLevel = 0;
+    public float effectivePowLevel = 0;
+    public float accelFactor = 0.5f;
     private Vector3 moveDirection = Vector3.zero;
     private Vector3 targetPosition;
 
@@ -13,11 +17,11 @@ public class CapitalShip : Ship
     float roll;
     float yaw;
 
-
     // Start is called before the first frame update
     new void Start()
     {
         base.Start();
+        effectivePowLevel = powLevel;
     }
 
     // Update is called once per frame
@@ -27,11 +31,26 @@ public class CapitalShip : Ship
         roll = Input.GetAxis("Horizontal");
         pitch = -Input.GetAxis("Vertical");
 
-        // rotate
-        transform.Rotate(Vector3.back * roll * 100f * Time.deltaTime, Space.Self);
-        transform.Rotate(Vector3.right * pitch * 100f * Time.deltaTime, Space.Self);
+        // pitch and roll
+        transform.Rotate(Vector3.back * roll * engineRotationSpeed * Time.deltaTime, Space.Self);
+        transform.Rotate(Vector3.right * pitch * engineRotationSpeed * Time.deltaTime, Space.Self);
 
         // alter speed with space (for now)
-        if (Input.GetKey("space")) transform.Translate(Vector3.forward * enginePower * Time.deltaTime);
+        if (Input.GetButtonDown("Thrust"))
+        {
+            {
+                powLevel += 25 * Input.GetAxis("Thrust");
+                powLevel = Mathf.Clamp(powLevel, 0, 100);
+            }
+        }
+
+        effectivePowLevel = Mathf.Lerp(effectivePowLevel, powLevel, accelFactor * Time.deltaTime);
+
+        transform.Translate(Vector3.forward * enginePower * Time.deltaTime * (effectivePowLevel / 100));
+
+        if (Math.Abs(Input.GetAxis("Jump")) > 0.001)
+        {
+            transform.Translate(Vector3.up * (enginePower/10) * Time.deltaTime);
+        }
     }
 }
