@@ -13,7 +13,8 @@ using GameProtobufs.Services;
 
 public class Client : MonoBehaviour
 {
-    public string serverAddress = "localhost:34266";
+    public string serverAddress = "localhost";
+    public int serverPort = 34268;
     public int bufferSize = NetworkSettings.defaultBufferSize;
     public float timeoutDelay = NetworkSettings.defaultTimeoutDelay;
     public float pingGapDuration = NetworkSettings.defaultPingGapDuration;
@@ -51,17 +52,9 @@ public class Client : MonoBehaviour
 
     public void Connect()
     {
-        string[] str_split = serverAddress.Split(new char[] { ':' }, 2);
-        string host = str_split[0];
-        int port = NetworkSettings.defaultPort;
-        if(str_split.Length > 1)
-        {
-            int.TryParse(str_split[1], out port);
-        }
-
         lastContactWithServer = DateTime.Now;
         lastPing = DateTime.Now;
-        socket.Connect(host, port);
+        socket.Connect(serverAddress, serverPort);
         CONNECT();
     }
 
