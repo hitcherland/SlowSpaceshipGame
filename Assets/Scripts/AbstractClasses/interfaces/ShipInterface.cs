@@ -26,6 +26,7 @@ public class Ship : MonoBehaviour, ShipInterface
     public Dictionary<string, int> moduleKeyBindings;
     public int team;
     public ShipType type = ShipType.Capital;
+    public Guid ownerGuid;
     //ModuleMountPoint[] moduleMountPoints;
 
     public virtual int calculateCurrentHealth() { throw new NotImplementedException(); }

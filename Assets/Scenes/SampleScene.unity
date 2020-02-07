@@ -281,70 +281,10 @@ MonoBehaviour:
   relativePoint: {x: 0, y: 0, z: 0}
   relativeRotation: {x: 0, y: 0, z: 0, w: 0}
   lerpSpeed: 2.5
---- !u!1 &763614584
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 763614587}
-  - component: {fileID: 763614586}
-  - component: {fileID: 763614585}
-  m_Layer: 0
-  m_Name: Client
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &763614585
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 763614584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c559c8382477de4899658cfcdfc6c1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  owner: 
-  timestamp: -1
---- !u!114 &763614586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 763614584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a06e4f826afe5ab46938bfed2443f2ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  remoteAddress: 127.0.01
-  remotePort: 6435
-  localAddress: 127.0.01
-  localPort: 6434
-  addressFamily: 2
-  IsClient: 1
---- !u!4 &763614587
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 763614584}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -12.13}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  angleBetween: {x: 0, y: 0, z: 0, w: 0}
+  goalRotation: {x: 0, y: 0, z: 0, w: 0}
+  goalPosition: {x: 0, y: 0, z: 0}
+  mouseRot: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1003140414
 GameObject:
   m_ObjectHideFlags: 0
