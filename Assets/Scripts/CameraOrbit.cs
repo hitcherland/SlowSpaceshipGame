@@ -9,6 +9,7 @@ public class CameraOrbit : MonoBehaviour
     public float sensitivity = 1f;
     public float returnSpeed = 0f;
     public float extraDistanceDueToSpeed = 1f;
+    public bool invertYAxis = false;
 
     private float x = 0, y = 0;
     private Vector3 initialPoint;
@@ -32,7 +33,7 @@ public class CameraOrbit : MonoBehaviour
     {
         // Use incremental mouse rotations
         x += sensitivity * Input.GetAxis("Mouse X");
-        y += sensitivity * Input.GetAxis("Mouse Y");
+        y += (invertYAxis ? 1 : -1) * sensitivity * Input.GetAxis("Mouse Y");
 
         // We can have the camera return to it's default position
         x = Mathf.Lerp(x, 0, returnSpeed * Time.deltaTime);
