@@ -19,6 +19,7 @@ public class Client : MonoBehaviour
     public float timeoutDelay = NetworkSettings.defaultTimeoutDelay;
     public float pingGapDuration = NetworkSettings.defaultPingGapDuration;
     public Guid guid;
+    public bool useIpV6 = true;
 
     private Socket socket;
     private DateTime lastContactWithServer;
@@ -27,10 +28,19 @@ public class Client : MonoBehaviour
     private delegate void ToDoFunc();
     private Queue<ToDoFunc> toDos = new Queue<ToDoFunc>();
 
+    public Server remote;
+
     public void Start()
     {
-        socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
+        socket = new Socket(useIpV6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         manager = GetComponent<GameObjectManager>();
+    }
+
+    public void PublicConnect()
+    {
+        serverAddress = remote.publicEndPoint.Address.ToString();
+        serverPort = remote.publicEndPoint.Port;
+        Connect();
     }
 
     public void Update()

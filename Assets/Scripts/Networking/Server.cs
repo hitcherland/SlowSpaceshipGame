@@ -6,6 +6,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using GameProtobufs.Services;
+using STUN;
 
 public static class NetworkSettings
 {
@@ -33,6 +34,8 @@ public class Server : MonoBehaviour
     public float timeoutDelay = NetworkSettings.defaultTimeoutDelay;
     public int pingGapDuration = NetworkSettings.defaultPingGapDuration;
 
+    public bool useIpV6 = false;
+
     private Socket socket;
     private List<EndPoint> clients = new List<EndPoint>();
     private Dictionary<EndPoint, DateTime> lastContactWithClient = new Dictionary<EndPoint, DateTime>();
@@ -42,6 +45,8 @@ public class Server : MonoBehaviour
     private delegate void ToDoFunc();
     private Queue<ToDoFunc> toDos = new Queue<ToDoFunc>();
 
+    public IPEndPoint publicEndPoint;
+
     ~Server()
     {
         Disconnect();
@@ -50,7 +55,7 @@ public class Server : MonoBehaviour
 
     public void Start()
     {
-        socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
+        socket = new Socket(useIpV6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         manager = GetComponent<GameObjectManager>();
         Connect();
     }
@@ -84,14 +89,30 @@ public class Server : MonoBehaviour
         lastContactWithClient.Clear();
         clientGuids.Clear();
         toDos.Clear();
-        socket.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
+
+        IPEndPoint stunEndPoint = new IPEndPoint(IPAddress.Any, 0);
+        foreach(IPAddress ip in Dns.GetHostAddresses("stun3.l.google.com"))
+        {
+            if (ip.AddressFamily == (useIpV6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork))
+                stunEndPoint = new IPEndPoint(ip, 19302);
+        }
+
+        if (stunEndPoint.Address == IPAddress.Any)
+            throw new Exception("STUN failed");
+
+        socket.Bind(new IPEndPoint(useIpV6 ? IPAddress.IPv6Any : IPAddress.Any, port));
         Debug.Log("[Server][" + DateTime.Now + "] START " + socket.LocalEndPoint);
+
+        STUNQueryResult queryResult = STUNClient.Query(socket, stunEndPoint, STUNQueryType.PublicIP);
+        publicEndPoint = queryResult.PublicEndPoint;
+
+        Debug.Log("[Server][" + DateTime.Now + "] STUN " + publicEndPoint + " via STUN server " + stunEndPoint);
     }
 
     public void Reconnect()
     {
         socket.Disconnect(true);
-        socket.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
+        socket.Bind(new IPEndPoint(useIpV6 ? IPAddress.IPv6Any : IPAddress.Any, port));
         clients = new List<EndPoint>();
     }
 
@@ -105,7 +126,7 @@ public class Server : MonoBehaviour
 
         SocketAsyncEventArgs args = new SocketAsyncEventArgs();
         args.SetBuffer(new byte[bufferSize], 0, bufferSize);
-        args.RemoteEndPoint = new IPEndPoint(IPAddress.IPv6Any, 0);
+        args.RemoteEndPoint = new IPEndPoint(useIpV6 ? IPAddress.IPv6Any : IPAddress.Any, 0);
         args.Completed += OnReceive;
         socket.ReceiveFromAsync(args);
     }
