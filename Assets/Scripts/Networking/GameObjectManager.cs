@@ -8,7 +8,7 @@ using GameProtobufs;
 
 public interface Watchable
 {
-    Guid GetGuid();
+    string GetGuid();
     Type GetProtobufType();
     bool HasChanged();
     IMessage ToProtobuf();
@@ -57,7 +57,7 @@ public class GameObjectManager : MonoBehaviour
         Watchable[] watchables = GetComponentsInChildren<Watchable>();
         foreach(Watchable watchable in watchables)
         {
-            if (client != null && client.guid.CompareTo(watchable.GetGuid()) != 0)
+            if (client != null && client.guid != watchable.GetGuid())
                 continue;
 
             if (!ignoreUnchanged || watchable.HasChanged())
@@ -85,7 +85,7 @@ public class GameObjectManager : MonoBehaviour
                 CapitalShip ship = childTransform.GetComponent<CapitalShip>();
                 ship.FromProtobuf(shipMessage);
 
-                if (client != null && client.guid.CompareTo(ship.ownerGuid) == 0)
+                if (client != null && client.guid == ship.ownerGuid)
                 {
                     GameObject camera = CreateCamera(shipObject, shipMessage.Model);
                 }

@@ -39,7 +39,7 @@ public class Server : MonoBehaviour
     private List<EndPoint> clients = new List<EndPoint>();
     private Dictionary<EndPoint, DateTime> lastContactWithClient = new Dictionary<EndPoint, DateTime>();
     private Dictionary<EndPoint, DateTime> lastPingToClient = new Dictionary<EndPoint, DateTime>();
-    private Dictionary<EndPoint, Guid> clientGuids = new Dictionary<EndPoint, Guid>();
+    private Dictionary<EndPoint, string> clientGuids = new Dictionary<EndPoint, string>();
     private GameObjectManager manager;
     private delegate void ToDoFunc();
     private Queue<ToDoFunc> toDos = new Queue<ToDoFunc>();
@@ -193,7 +193,7 @@ public class Server : MonoBehaviour
         if (!clients.Contains(endPoint))
         {
             clients.Add(endPoint);
-            clientGuids[endPoint] = Guid.NewGuid();
+            clientGuids[endPoint] = Guid.NewGuid().ToString();
             lastPingToClient[endPoint] = DateTime.Now;
 
 
@@ -241,9 +241,9 @@ public class Server : MonoBehaviour
         SENDTO(endPoint, NetworkSettings.ServiceType.PONG);
     }
 
-    public void CONNECT(EndPoint endPoint, Guid guid)
+    public void CONNECT(EndPoint endPoint, string guid)
     {
-        byte[] guidBytes = guid.ToByteArray();
+        byte[] guidBytes = new Guid(guid).ToByteArray();
         SENDTO(endPoint, NetworkSettings.ServiceType.CONNECT, guidBytes);
     }
 

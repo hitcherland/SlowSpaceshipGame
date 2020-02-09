@@ -29,7 +29,7 @@ public class CapitalShip : Ship
     // Update is called once per frame
     void Update()
     {
-        if (client == null || client.guid.CompareTo(ownerGuid) != 0)
+        if (client == null || client.guid != ownerGuid)
             return;
         // get axes
         roll = Input.GetAxis("Horizontal");

@@ -13,7 +13,7 @@ public class Client : MonoBehaviour
     public int bufferSize = NetworkSettings.defaultBufferSize;
     public float timeoutDelay = NetworkSettings.defaultTimeoutDelay;
     public float pingGapDuration = NetworkSettings.defaultPingGapDuration;
-    public Guid guid;
+    public string guid;
 
     private Socket socket;
     private DateTime lastContactWithServer;
@@ -125,7 +125,7 @@ public class Client : MonoBehaviour
 
     public void OnConnect(byte[] buffer)
     {
-        guid = new Guid(buffer);
+        guid = new Guid(buffer).ToString();
         Debug.Log("[Client][" + DateTime.Now + "] Receive CONNECT " + guid);
 
         //toDos.Enqueue(() => { manager.CreateCapitalShip(guid); });

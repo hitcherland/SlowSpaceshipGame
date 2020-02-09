@@ -15,7 +15,7 @@ public class Ship : MonoBehaviour, Watchable
     public Dictionary<string, int> moduleKeyBindings;
     public int team;
     public ShipType type = ShipType.Capital;
-    public Guid ownerGuid;
+    public string ownerGuid;
     //ModuleMountPoint[] moduleMountPoints;
 
     public virtual int calculateCurrentHealth() { throw new NotImplementedException(); }
@@ -64,7 +64,7 @@ public class Ship : MonoBehaviour, Watchable
         return typeof(ShipMessage);
     }
 
-    public Guid GetGuid()
+    public string GetGuid()
     {
         return ownerGuid;
     }
@@ -89,7 +89,7 @@ public class Ship : MonoBehaviour, Watchable
 
         if(msg.OwnerGuid != null)
         {
-            ownerGuid = new Guid(msg.OwnerGuid);
+            ownerGuid = msg.OwnerGuid;
         }
 
         if(msg.Model != null && msg.Model != model)
@@ -103,7 +103,7 @@ public class Ship : MonoBehaviour, Watchable
         return new ShipMessage
         {
             Transform = transform.ToTransformMessage(),
-            OwnerGuid = ownerGuid.ToString(),
+            OwnerGuid = ownerGuid,
             Id = transform.name,
             Model = model,
         };
