@@ -8,8 +8,11 @@ public class CameraOrbit : MonoBehaviour
     public Transform focus;
     public float sensitivity = 1f;
     public float returnSpeed = 0f;
-    public float extraDistanceDueToSpeed = 1f;
+    public float extraDistanceDueToSpeed = 0.0f;
     public bool invertYAxis = false;
+    public float reqZoom = 0;
+    public float actualZoom = 0;
+    public float zoomFactor = 0.999f;
 
     private float x = 0, y = 0;
     private Vector3 initialPoint;
@@ -25,6 +28,9 @@ public class CameraOrbit : MonoBehaviour
     {
         if (focus != null)
             Initiate();
+
+        reqZoom = actualZoom;
+
     }
 
     public void Initiate()
@@ -39,6 +45,18 @@ public class CameraOrbit : MonoBehaviour
     {
         if (focus == null)
             return;
+
+        // determine whether we want to change the camera's zoom
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 ){
+            reqZoom += 0.10f;
+        }
+
+        if (Input.GetAxis("Mouse ScrollWheel") < 0)
+        {
+            reqZoom += -0.10f;
+        }
+
+        actualZoom = Mathf.Lerp(actualZoom, reqZoom, zoomFactor * Time.deltaTime);
 
         // Use incremental mouse rotations
         x += sensitivity * Input.GetAxis("Mouse X");
@@ -55,11 +73,15 @@ public class CameraOrbit : MonoBehaviour
         Quaternion mouseRotation = Quaternion.Euler(y, x, 0);
         Vector3 rotatedPoint = mouseRotation * initialPoint * (1 + extraDistanceDueToSpeed * (ship.effectivePowLevel) / 100);
         Vector3 transformedPoint = focus.TransformPoint(rotatedPoint);
+ 
         transform.position = transformedPoint;
 
         /* transform.LookAt(focus); was causing us gimbal locking issues
          * instead we just do the transformation manually
          */
         transform.rotation = focus.localRotation * initialRotation * mouseRotation;
+
+        // apply requested zoom translation
+        transform.Translate(initialPoint * actualZoom);
     }
 }

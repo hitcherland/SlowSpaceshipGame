@@ -13,11 +13,6 @@ public class CameraFollow : MonoBehaviour
     public Vector3 goalPosition;
     public Quaternion mouseRot;
 
-    //static float customSlerp(Vector3 x, Vector3 y, float angle, float t)
-    //{
-
-    //}
-
     // Start is called before the first frame update
     void Start()
     {
