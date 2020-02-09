@@ -56,7 +56,8 @@ public class CameraOrbit : MonoBehaviour
             reqZoom += -0.10f;
         }
 
-        actualZoom = Mathf.Lerp(actualZoom, reqZoom, zoomFactor * Time.deltaTime);
+        //actualZoom = Mathf.Lerp(actualZoom, reqZoom, zoomFactor * Time.deltaTime);
+        actualZoom = Mathf.MoveTowards(actualZoom, reqZoom, zoomFactor * Time.deltaTime);
 
         // Use incremental mouse rotations
         x += sensitivity * Input.GetAxis("Mouse X");
@@ -71,7 +72,7 @@ public class CameraOrbit : MonoBehaviour
          * and then transform that local space value to a world space value
          */
         Quaternion mouseRotation = Quaternion.Euler(y, x, 0);
-        Vector3 rotatedPoint = mouseRotation * initialPoint * (1 + extraDistanceDueToSpeed * (ship.effectivePowLevel) / 100);
+        Vector3 rotatedPoint = mouseRotation * initialPoint * (1 + actualZoom + extraDistanceDueToSpeed * (ship.effectivePowLevel) / 100);
         Vector3 transformedPoint = focus.TransformPoint(rotatedPoint);
  
         transform.position = transformedPoint;
@@ -80,8 +81,5 @@ public class CameraOrbit : MonoBehaviour
          * instead we just do the transformation manually
          */
         transform.rotation = focus.localRotation * initialRotation * mouseRotation;
-
-        // apply requested zoom translation
-        transform.Translate(initialPoint * actualZoom);
     }
 }

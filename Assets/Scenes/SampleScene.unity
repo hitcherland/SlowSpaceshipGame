@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.16809857, g: 0.013520595, b: 0.16473225, a: 1}
+  m_IndirectSpecularColor: {r: 0.046889134, g: 0.004333668, b: 0.04503955, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -314,6 +314,10 @@ MonoBehaviour:
   returnSpeed: 0
   extraDistanceDueToSpeed: 1
   invertYAxis: 0
+  reqZoom: 0
+  actualZoom: 0
+  zoomFactor: 0.999
+  zoomDuration: 0.5
 --- !u!1001 &736933925
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5286,6 +5290,11 @@ PrefabInstance:
       propertyPath: focus
       value: 
       objectReference: {fileID: 412764867}
+    - target: {fileID: 2697403615670141885, guid: 4520e0838cdf2274dbbae873f88ab5d3,
+        type: 3}
+      propertyPath: zoomDuration
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3085521626516516065, guid: 4520e0838cdf2274dbbae873f88ab5d3,
         type: 3}
       propertyPath: m_LocalPosition.x
