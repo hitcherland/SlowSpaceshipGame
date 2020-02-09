@@ -1,25 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Text;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
-using GameProtobufs.Services;
+using Google.Protobuf;
+using GameProtobufs;
 
 public class Client : MonoBehaviour
 {
     public string serverAddress = "localhost";
-    public int serverPort = 34268;
+    public int serverPort = NetworkSettings.defaultPort;
     public int bufferSize = NetworkSettings.defaultBufferSize;
     public float timeoutDelay = NetworkSettings.defaultTimeoutDelay;
     public float pingGapDuration = NetworkSettings.defaultPingGapDuration;
     public Guid guid;
-    public bool useIpV6 = true;
 
     private Socket socket;
     private DateTime lastContactWithServer;
@@ -28,19 +22,10 @@ public class Client : MonoBehaviour
     private delegate void ToDoFunc();
     private Queue<ToDoFunc> toDos = new Queue<ToDoFunc>();
 
-    public Server remote;
-
     public void Start()
     {
-        socket = new Socket(useIpV6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         manager = GetComponent<GameObjectManager>();
-    }
-
-    public void PublicConnect()
-    {
-        serverAddress = remote.publicEndPoint.Address.ToString();
-        serverPort = remote.publicEndPoint.Port;
-        Connect();
     }
 
     public void Update()
@@ -48,10 +33,12 @@ public class Client : MonoBehaviour
         if(socket != null && socket.Connected)
         {
             Receive();
+            UPDATE();
             if (lastContactWithServer.AddSeconds(timeoutDelay) < DateTime.Now)
             {
                 TIMEOUT();
             }
+            
         }
 
         while(toDos.Count > 0)
@@ -68,34 +55,6 @@ public class Client : MonoBehaviour
         CONNECT();
     }
 
-    private void PING()
-    {
-        if(lastPing.AddSeconds(pingGapDuration) > DateTime.Now)
-        {
-            return;
-        }
-
-        Debug.Log("[Client][" + Time.time + "] Send PING" + socket.RemoteEndPoint);
-        socket.Send(new byte[] { (byte)NetworkSettings.ServiceType.PING });
-        lastPing = DateTime.Now;
-    }
-
-    private void PONG()
-    {
-        Debug.Log("[Client][" + Time.time + "] Send PONG" + socket.RemoteEndPoint);
-        socket.Send(new byte[] { (byte)NetworkSettings.ServiceType.PONG });
-    }
-
-    private void CONNECT()
-    {
-        Debug.Log("[Client][" + Time.time + "] Send CONNECT " + socket.RemoteEndPoint);
-        socket.Send(new byte[] { (byte)NetworkSettings.ServiceType.CONNECT });
-    }
-
-    private void TIMEOUT()
-    {
-        PING();
-    }
 
     public void Receive()
     {
@@ -139,6 +98,9 @@ public class Client : MonoBehaviour
                 case NetworkSettings.ServiceType.LOBBY:
                     OnLobby();
                     break;
+                case NetworkSettings.ServiceType.GAMEUPDATE:
+                    OnGameUpdate(buffer);
+                    break;
                 default:
                     Debug.Log("[Server][" + DateTime.Now + "] BadServiceType " + serviceType + "=" + args.Buffer[0]);
                     break;
@@ -166,6 +128,63 @@ public class Client : MonoBehaviour
         guid = new Guid(buffer);
         Debug.Log("[Client][" + DateTime.Now + "] Receive CONNECT " + guid);
 
-        toDos.Enqueue(() => { manager.CreateCapitalShip(guid); });
+        //toDos.Enqueue(() => { manager.CreateCapitalShip(guid); });
+    }
+
+    public void OnGameUpdate(byte[] buffer)
+    {
+        StateMessage msg = StateMessage.Parser.ParseFrom(buffer);
+        toDos.Enqueue(() => { manager.Apply(msg); });
+    }
+
+    public void SEND(NetworkSettings.ServiceType serviceType, byte[] buffer = null)
+    {
+        if (buffer == null)
+        {
+            socket.SendTo(new byte[] { (byte)serviceType }, socket.RemoteEndPoint);
+            return;
+        }
+
+        byte[] outBuffer = new byte[1 + buffer.Length];
+        outBuffer[0] = (byte)serviceType;
+        buffer.CopyTo(outBuffer, 1);
+        socket.SendTo(outBuffer, socket.RemoteEndPoint);
+    }
+
+    public void UPDATE()
+    {
+        Debug.Log("[Client][" + DateTime.Now + "] Send UPDATE");
+        StateMessage message = manager.Collect();
+        byte[] buffer = message.ToByteArray();
+        SEND(NetworkSettings.ServiceType.GAMEUPDATE, buffer);
+    }
+
+    private void PING()
+    {
+        if (lastPing.AddSeconds(pingGapDuration) > DateTime.Now)
+        {
+            return;
+        }
+
+        Debug.Log("[Client][" + DateTime.Now + "] Send PING" + socket.RemoteEndPoint);
+        SEND(NetworkSettings.ServiceType.PING);
+        lastPing = DateTime.Now;
+    }
+
+    private void PONG()
+    {
+        Debug.Log("[Client][" + DateTime.Now + "] Send PONG" + socket.RemoteEndPoint);
+        SEND(NetworkSettings.ServiceType.PONG);
+    }
+
+    private void CONNECT()
+    {
+        Debug.Log("[Client][" + DateTime.Now + "] Send CONNECT " + socket.RemoteEndPoint);
+        SEND(NetworkSettings.ServiceType.CONNECT);
+    }
+
+    private void TIMEOUT()
+    {
+        PING();
     }
 }

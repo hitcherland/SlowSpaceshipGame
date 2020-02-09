@@ -12,6 +12,7 @@ public class CapitalShip : Ship
     public float accelFactor = 0.5f;
     private Vector3 moveDirection = Vector3.zero;
     private Vector3 targetPosition;
+    private Client client;
 
     float pitch;
     float roll;
@@ -22,11 +23,14 @@ public class CapitalShip : Ship
     {
         base.Start();
         effectivePowLevel = powLevel;
+        client = transform.parent.GetComponent<Client>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (client == null || client.guid.CompareTo(ownerGuid) != 0)
+            return;
         // get axes
         roll = Input.GetAxis("Horizontal");
         pitch = -Input.GetAxis("Vertical");

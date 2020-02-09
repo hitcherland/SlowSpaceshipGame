@@ -23,6 +23,12 @@ public class CameraOrbit : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (focus != null)
+            Initiate();
+    }
+
+    public void Initiate()
+    {
         ship = focus.GetComponent<CapitalShip>();
         initialPoint = focus.InverseTransformPoint(transform.position);
         initialRotation = Quaternion.Inverse(focus.localRotation) * transform.localRotation;
@@ -31,6 +37,9 @@ public class CameraOrbit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (focus == null)
+            return;
+
         // Use incremental mouse rotations
         x += sensitivity * Input.GetAxis("Mouse X");
         y += (invertYAxis ? 1 : -1) * sensitivity * Input.GetAxis("Mouse Y");

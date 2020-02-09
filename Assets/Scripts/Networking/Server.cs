@@ -5,7 +5,8 @@ using UnityEngine;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
-using GameProtobufs.Services;
+using Google.Protobuf;
+using GameProtobufs;
 using STUN;
 
 public static class NetworkSettings
@@ -34,8 +35,6 @@ public class Server : MonoBehaviour
     public float timeoutDelay = NetworkSettings.defaultTimeoutDelay;
     public int pingGapDuration = NetworkSettings.defaultPingGapDuration;
 
-    public bool useIpV6 = false;
-
     private Socket socket;
     private List<EndPoint> clients = new List<EndPoint>();
     private Dictionary<EndPoint, DateTime> lastContactWithClient = new Dictionary<EndPoint, DateTime>();
@@ -55,7 +54,7 @@ public class Server : MonoBehaviour
 
     public void Start()
     {
-        socket = new Socket(useIpV6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         manager = GetComponent<GameObjectManager>();
         Connect();
     }
@@ -65,7 +64,11 @@ public class Server : MonoBehaviour
         if (socket != null && socket.IsBound)
         {
             Receive();
-
+            while (toDos.Count > 0)
+            {
+                toDos.Dequeue()?.Invoke();
+            }
+            broadcastUPDATE();
             foreach (EndPoint endPoint in lastContactWithClient.Keys)
             {
                 DateTime lastContact = lastContactWithClient[endPoint];
@@ -77,10 +80,6 @@ public class Server : MonoBehaviour
             }
         }
 
-        while (toDos.Count > 0)
-        {
-            toDos.Dequeue()();
-        }
     }
 
     public void Connect()
@@ -93,14 +92,14 @@ public class Server : MonoBehaviour
         IPEndPoint stunEndPoint = new IPEndPoint(IPAddress.Any, 0);
         foreach(IPAddress ip in Dns.GetHostAddresses("stun3.l.google.com"))
         {
-            if (ip.AddressFamily == (useIpV6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork))
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
                 stunEndPoint = new IPEndPoint(ip, 19302);
         }
 
         if (stunEndPoint.Address == IPAddress.Any)
             throw new Exception("STUN failed");
 
-        socket.Bind(new IPEndPoint(useIpV6 ? IPAddress.IPv6Any : IPAddress.Any, port));
+        socket.Bind(new IPEndPoint(IPAddress.Any, port));
         Debug.Log("[Server][" + DateTime.Now + "] START " + socket.LocalEndPoint);
 
         STUNQueryResult queryResult = STUNClient.Query(socket, stunEndPoint, STUNQueryType.PublicIP);
@@ -112,7 +111,7 @@ public class Server : MonoBehaviour
     public void Reconnect()
     {
         socket.Disconnect(true);
-        socket.Bind(new IPEndPoint(useIpV6 ? IPAddress.IPv6Any : IPAddress.Any, port));
+        socket.Bind(new IPEndPoint(IPAddress.Any, port));
         clients = new List<EndPoint>();
     }
 
@@ -123,10 +122,9 @@ public class Server : MonoBehaviour
 
     public void Receive()
     {
-
         SocketAsyncEventArgs args = new SocketAsyncEventArgs();
         args.SetBuffer(new byte[bufferSize], 0, bufferSize);
-        args.RemoteEndPoint = new IPEndPoint(useIpV6 ? IPAddress.IPv6Any : IPAddress.Any, 0);
+        args.RemoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
         args.Completed += OnReceive;
         socket.ReceiveFromAsync(args);
     }
@@ -148,7 +146,9 @@ public class Server : MonoBehaviour
 
             EndPoint endPoint = args.RemoteEndPoint;
             NetworkSettings.ServiceType serviceType = (NetworkSettings.ServiceType)args.Buffer[0];
-            lastContactWithClient[endPoint] = DateTime.Now;
+            toDos.Enqueue(() => { lastContactWithClient[endPoint] = DateTime.Now; });
+            byte[] buffer = new byte[args.BytesTransferred - 1];
+            Array.Copy(args.Buffer, 1, buffer, 0, args.BytesTransferred - 1);
 
             switch (serviceType)
             {
@@ -159,6 +159,9 @@ public class Server : MonoBehaviour
                     break;
                 case NetworkSettings.ServiceType.CONNECT:
                     OnConnect(endPoint);
+                    break;
+                case NetworkSettings.ServiceType.GAMEUPDATE:
+                    OnGameUpdate(endPoint, buffer);
                     break;
                 default:
                     Debug.Log("[Server][" + DateTime.Now + "] BadServiceType " + serviceType + "=" + args.Buffer[0]);
@@ -177,6 +180,13 @@ public class Server : MonoBehaviour
         PONG(endPoint);
     }
 
+    public void OnGameUpdate(EndPoint endPoint, byte[] buffer)
+    {
+        Debug.Log("[Server][" + DateTime.Now + "] Receive Update " + endPoint);
+        StateMessage msg = StateMessage.Parser.ParseFrom(buffer);
+        toDos.Enqueue(() => { manager.Apply(msg); });
+    }
+
     public void OnConnect(EndPoint endPoint)
     {
         Debug.Log("[Server][" + DateTime.Now + "] Receive CONNECT " + endPoint);
@@ -188,10 +198,27 @@ public class Server : MonoBehaviour
 
 
             //TODO: move this somewhere else, it shouldn't happen here
-            toDos.Enqueue(() => { manager.CreateCapitalShip(clientGuids[endPoint]); });
+            toDos.Enqueue(() => {
+                GameObject ship = manager.CreateCapitalShip(Guid.NewGuid().ToString(), "CapitalShipOne");
+                ship.GetComponent<Ship>().ownerGuid = clientGuids[endPoint];
+            });
         }
 
         CONNECT(endPoint, clientGuids[endPoint]);
+    }
+
+    public void SENDTO(EndPoint endPoint, NetworkSettings.ServiceType serviceType, byte[] buffer = null)
+    {
+        if (buffer == null)
+        {
+            socket.SendTo(new byte[] { (byte)serviceType }, endPoint);
+            return;
+        }
+
+        byte[] outBuffer = new byte[1 + buffer.Length];
+        outBuffer[0] = (byte)serviceType;
+        buffer.CopyTo(outBuffer, 1);
+        socket.SendTo(outBuffer, endPoint);
     }
 
     public void TIMEOUT(EndPoint endPoint)
@@ -205,26 +232,33 @@ public class Server : MonoBehaviour
         {
             return;
         }
-        socket.SendTo(new byte[] { (byte)NetworkSettings.ServiceType.PING }, endPoint);
+        SENDTO(endPoint, NetworkSettings.ServiceType.PING);
         lastPingToClient[endPoint] = DateTime.Now;
     }
 
     public void PONG(EndPoint endPoint)
     {
-        socket.SendTo(new byte[] { (byte)NetworkSettings.ServiceType.PONG }, endPoint);
+        SENDTO(endPoint, NetworkSettings.ServiceType.PONG);
     }
 
     public void CONNECT(EndPoint endPoint, Guid guid)
     {
         byte[] guidBytes = guid.ToByteArray();
-        byte[] buffer = new byte[1 + guidBytes.Length];
-        buffer[0] = (byte)NetworkSettings.ServiceType.CONNECT;
-        guidBytes.CopyTo(buffer, 1);
-        socket.SendTo(buffer, endPoint);
+        SENDTO(endPoint, NetworkSettings.ServiceType.CONNECT, guidBytes);
     }
 
     public void LOBBY(EndPoint endPoint)
     {
-        socket.SendTo(new byte[] { (byte)NetworkSettings.ServiceType.LOBBY }, endPoint);
+        SENDTO(endPoint, NetworkSettings.ServiceType.LOBBY);
+    }
+
+    public void broadcastUPDATE()
+    {
+        StateMessage message = manager.Collect();
+        byte[] buffer = message.ToByteArray();
+        foreach (EndPoint endPoint in clients)
+        {
+            SENDTO(endPoint, NetworkSettings.ServiceType.GAMEUPDATE, buffer);
+        }
     }
 }
